@@ -52,7 +52,16 @@ export function SignUpForm(): React.JSX.Element {
     async (values: Values): Promise<void> => {
       setIsPending(true);
 
-      const { error } = await authClient.signUp(values);
+      const { error } = await authClient.signUp({
+        email: values.email,
+        password: values.password,
+        options: {
+          data: {
+            firstName: values.firstName,
+            lastName: values.lastName,
+          },
+        },
+      });
 
       if (error) {
         setError('root', { type: 'server', message: error });
@@ -60,11 +69,8 @@ export function SignUpForm(): React.JSX.Element {
         return;
       }
 
-      // Refresh the auth state
       await checkSession?.();
 
-      // UserProvider, for this case, will not refresh the router
-      // After refresh, GuestGuard will handle the redirect
       router.refresh();
     },
     [checkSession, router, setError]
