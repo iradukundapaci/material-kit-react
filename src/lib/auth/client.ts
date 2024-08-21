@@ -74,11 +74,7 @@ class AuthClient {
 
   async getUser(): Promise<{ data?: User | null; error?: string }> {
     // Make API request
-    const { error } = await supabase.auth.getUser();
-
-    if (error) {
-      return { data: null, error: error?.message };
-    }
+    const { data } = await supabase.auth.getUser();
 
     const token = localStorage.getItem('custom-auth-token');
 
@@ -87,11 +83,11 @@ class AuthClient {
     }
 
     const user = {
-      id: 'USR-000',
-      avatar: '/assets/avatar.png',
-      firstName: 'Sofia',
-      lastName: 'Rivers',
-      email: 'sofia@devias.io',
+      id: data.user.id,
+      avatar: '/assets/avatar.png', // Placeholder, as no avatar URL is provided in the data
+      firstName: data.user.user_metadata.firstName,
+      lastName: data.user.user_metadata.lastName,
+      email: data.user.email,
     } satisfies User;
 
     return { data: user };
