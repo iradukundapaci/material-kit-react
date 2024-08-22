@@ -17,47 +17,54 @@ import dayjs from 'dayjs';
 
 const statusMap = {
   pending: { label: 'Pending', color: 'warning' },
-  delivered: { label: 'Delivered', color: 'success' },
-  refunded: { label: 'Refunded', color: 'error' },
+  completed: { label: 'Completed', color: 'success' },
+  canceled: { label: 'Canceled', color: 'error' },
 } as const;
 
-export interface Order {
-  id: string;
-  customer: { name: string };
+export interface Bookings {
+  id: number;
+  customer: string;
+  service: string;
+  carType: string;
+  date?: Date;
+  time: string;
   amount: number;
-  status: 'pending' | 'delivered' | 'refunded';
-  createdAt: Date;
+  status: 'pending' | 'completed' | 'canceled';
 }
 
-export interface LatestOrdersProps {
-  orders?: Order[];
+export interface LatestBookingsProps {
+  bookings?: Bookings[];
   sx?: SxProps;
 }
 
-export function LatestOrders({ orders = [], sx }: LatestOrdersProps): React.JSX.Element {
+export function LatestOrders({ bookings = [], sx }: LatestBookingsProps): React.JSX.Element {
   return (
     <Card sx={sx}>
-      <CardHeader title="Latest orders" />
+      <CardHeader title="Today's Bookings" />
       <Divider />
       <Box sx={{ overflowX: 'auto' }}>
         <Table sx={{ minWidth: 800 }}>
           <TableHead>
             <TableRow>
-              <TableCell>Order</TableCell>
-              <TableCell>Customer</TableCell>
-              <TableCell sortDirection="desc">Date</TableCell>
+              <TableCell>Customer Names</TableCell>
+              <TableCell>Service</TableCell>
+              <TableCell>Car type</TableCell>
+              <TableCell>Time</TableCell>
+              <TableCell sortDirection="desc">Amount</TableCell>
               <TableCell>Status</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {orders.map((order) => {
-              const { label, color } = statusMap[order.status] ?? { label: 'Unknown', color: 'default' };
+            {bookings.map((booking) => {
+              const { label, color } = statusMap[booking.status] ?? { label: 'Unknown', color: 'default' };
 
               return (
-                <TableRow hover key={order.id}>
-                  <TableCell>{order.id}</TableCell>
-                  <TableCell>{order.customer.name}</TableCell>
-                  <TableCell>{dayjs(order.createdAt).format('MMM D, YYYY')}</TableCell>
+                <TableRow hover key={booking.id}>
+                  <TableCell>{booking.customer}</TableCell>
+                  <TableCell>{booking.service}</TableCell>
+                  <TableCell>{booking.carType}</TableCell>
+                  <TableCell>{booking.time}</TableCell>
+                  <TableCell>{booking.amount}</TableCell>
                   <TableCell>
                     <Chip color={color} label={label} size="small" />
                   </TableCell>
